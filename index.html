@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI Telecom Banner Studio</title>
+    <title>AI Telecom Banner Studio v2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -15,167 +15,164 @@
         <div class="brand">
           <span>AI</span>
           <div>
-            <strong>Telecom Banner Studio</strong>
-            <small>Next.js + OpenAI Images API</small>
+            <strong>Banner Studio v2</strong>
+            <small>gpt-image-1 ready flow</small>
           </div>
         </div>
         <nav>
-          <a class="active" href="#studio">Studio</a>
-          <a href="#tariffs">CRUD тарифов</a>
-          <a href="#architecture">Stack</a>
+          <a class="active" href="#generate">Генерация</a>
+          <a href="#history">История</a>
+          <a href="#admin">Админ</a>
         </nav>
       </aside>
 
       <section class="content">
-        <header class="hero" id="studio">
+        <header class="hero">
           <div>
-            <p class="eyebrow">gpt-image-1 · без шаблонов · 4 уникальных варианта</p>
-            <h1>AI-студия для генерации рекламных баннеров телеком-компании</h1>
+            <p class="eyebrow">OpenAI Images API · 4 независимых баннера · без шаблонов</p>
+            <h1>Генерация готовых рекламных баннеров с превью, историей и скачиванием</h1>
           </div>
-          <button class="primary" id="runGeneration" type="button">Запустить генерацию</button>
+          <div class="api-status" id="apiStatus">
+            <span></span>
+            Ready
+          </div>
         </header>
 
-        <section class="studio-grid">
-          <form class="panel generator" id="generatorForm">
+        <section id="generate" class="workspace">
+          <form class="panel controls" id="generationForm">
             <div class="section-title">
-              <h2>Новый баннер</h2>
-              <p>Промпт отправляется в OpenAI Images API, система возвращает четыре разные концепции.</p>
+              <h2>Новый запрос</h2>
+              <p>В production запрос уходит в `gpt-image-1`, изображение сохраняется и сразу показывается пользователю.</p>
             </div>
 
             <label>
-              Рекламная задача
-              <textarea id="brief" rows="7">Продвинуть тариф Fiber Max: интернет до 1 Гбит/с, Wi-Fi 6 роутер, подключение за 24 часа.</textarea>
+              Текст запроса
+              <textarea id="prompt" rows="7">Сгенерировать рекламный баннер для тарифа Fiber Max: интернет до 1 Гбит/с, Wi-Fi 6 роутер, подключение за 24 часа.</textarea>
             </label>
 
-            <div class="form-row">
+            <div class="fields">
               <label>
-                Канал
-                <select id="channel">
-                  <option>Digital Ads</option>
-                  <option>Outdoor LED</option>
-                  <option>Instagram Story</option>
-                  <option>Website Hero</option>
+                Формат
+                <select id="format">
+                  <option>1024x1024 PNG</option>
+                  <option>1536x1024 PNG</option>
+                  <option>1024x1536 PNG</option>
                 </select>
               </label>
               <label>
-                Тональность
-                <select id="tone">
-                  <option>Премиальная</option>
-                  <option>Массовая</option>
-                  <option>Бизнес</option>
-                  <option>Молодежная</option>
+                Количество
+                <select id="count">
+                  <option>4 варианта</option>
                 </select>
               </label>
             </div>
 
-            <button class="primary wide" type="submit">Сгенерировать 4 баннера</button>
+            <label class="toggle">
+              <input id="simulateError" type="checkbox" />
+              <span>Симулировать ошибку API</span>
+            </label>
+
+            <button class="primary wide" type="submit">Сгенерировать баннеры</button>
+            <p class="error" id="errorBox" role="alert"></p>
           </form>
 
-          <section class="panel pipeline">
+          <section class="panel preview-panel">
             <div class="section-title">
-              <h2>Pipeline</h2>
-              <p>Статусы имитируют реальный backend: OpenAI Images API, запись результата и retry.</p>
+              <h2>Превью результата</h2>
+              <p>Кнопки «Просмотреть» и «Скачать» активируются только после успешной генерации.</p>
             </div>
-            <ol id="pipeline">
-              <li><span>Prompt enrichment</span><strong>Ready</strong></li>
-              <li><span>gpt-image-1 batch</span><strong>Waiting</strong></li>
-              <li><span>Save to PostgreSQL</span><strong>Waiting</strong></li>
-              <li><span>Auto retry</span><strong>Enabled</strong></li>
-            </ol>
+
+            <div class="preview-empty" id="emptyState">
+              <strong>Баннер еще не создан</strong>
+              <span>Запустите генерацию, чтобы получить изображение от API.</span>
+            </div>
+
+            <div class="preview-card hidden" id="previewCard">
+              <div class="generated-image" id="generatedImage">
+                <span id="imageTag">Generated</span>
+                <h3 id="imageTitle">Fiber Max</h3>
+                <p id="imageCopy">Готовый рекламный баннер</p>
+              </div>
+              <div class="actions">
+                <button id="viewBtn" type="button" disabled>Просмотреть</button>
+                <button id="pngBtn" type="button" disabled>Скачать PNG</button>
+                <button id="jpgBtn" type="button" disabled>Скачать JPG</button>
+              </div>
+            </div>
           </section>
         </section>
 
-        <section class="variants" aria-label="Generated banner variants">
-          <article class="banner-card">
-            <div class="banner-art art-one">
-              <span>01</span>
-              <h3>Fiber Max</h3>
-              <p>1 Гбит/с дома</p>
-            </div>
-            <div class="card-body">
-              <strong>Unique AI output</strong>
-              <p>Не шаблон: отдельная композиция, цвет и рекламный акцент.</p>
-            </div>
+        <section class="variants" aria-label="Four generated variants">
+          <article class="variant waiting">
+            <span>Variant 01</span>
+            <strong>Waiting</strong>
+            <p>Независимый запрос к модели</p>
           </article>
-
-          <article class="banner-card">
-            <div class="banner-art art-two">
-              <span>02</span>
-              <h3>Wi-Fi 6</h3>
-              <p>Стабильная сеть</p>
-            </div>
-            <div class="card-body">
-              <strong>Unique AI output</strong>
-              <p>Визуал под продуктовую выгоду и быстрый CTA.</p>
-            </div>
+          <article class="variant waiting">
+            <span>Variant 02</span>
+            <strong>Waiting</strong>
+            <p>Новая композиция без шаблона</p>
           </article>
-
-          <article class="banner-card">
-            <div class="banner-art art-three">
-              <span>03</span>
-              <h3>24 hours</h3>
-              <p>Подключение быстро</p>
-            </div>
-            <div class="card-body">
-              <strong>Unique AI output</strong>
-              <p>Отдельная концепция для performance-кампаний.</p>
-            </div>
+          <article class="variant waiting">
+            <span>Variant 03</span>
+            <strong>Waiting</strong>
+            <p>Отдельный визуальный результат</p>
           </article>
-
-          <article class="banner-card">
-            <div class="banner-art art-four">
-              <span>04</span>
-              <h3>Retry pass</h3>
-              <p>Новый результат</p>
-            </div>
-            <div class="card-body">
-              <strong>Auto retry</strong>
-              <p>Если генерация падает, backend повторяет запрос.</p>
-            </div>
+          <article class="variant waiting">
+            <span>Variant 04</span>
+            <strong>Waiting</strong>
+            <p>Сохранение после успеха</p>
           </article>
         </section>
 
-        <section class="admin" id="tariffs">
+        <section id="history" class="history-grid">
           <div class="panel">
             <div class="section-title">
-              <h2>CRUD тарифов</h2>
-              <p>Админская часть для управления тарифами, которые используются в промптах и витрине.</p>
+              <h2>История генераций</h2>
+              <p>Хранит текст запроса, изображение, дату и статус.</p>
             </div>
-            <form id="tariffForm" class="tariff-form">
-              <label>Название <input id="tariffName" value="Fiber Max" /></label>
-              <label>Скорость <input id="tariffSpeed" value="1 Гбит/с" /></label>
-              <label>Цена <input id="tariffPrice" value="7 990 ₸" /></label>
-              <button class="primary wide" type="submit">Добавить тариф</button>
-            </form>
+            <ul class="history-list" id="historyList">
+              <li>
+                <span class="dot success"></span>
+                <div><strong>Fiber Max promo</strong><small>Success · 09.07.2026 15:59</small></div>
+              </li>
+            </ul>
           </div>
 
-          <div class="panel">
+          <div class="panel" id="admin">
             <div class="section-title">
-              <h2>Тарифы в БД</h2>
-              <p>В production эти записи хранятся в PostgreSQL через Prisma.</p>
+              <h2>Админ-панель</h2>
+              <p>CRUD тарифов, история генераций и настройки бренда для production-версии.</p>
             </div>
-            <ul class="tariff-list" id="tariffList">
-              <li><span>Fiber Start</span><strong>300 Мбит/с · 4 990 ₸</strong><button>Изменить</button></li>
-              <li><span>Fiber Max</span><strong>1 Гбит/с · 7 990 ₸</strong><button>Изменить</button></li>
-              <li><span>Business Pro</span><strong>SLA · 14 990 ₸</strong><button>Изменить</button></li>
+            <form class="tariff-form" id="tariffForm">
+              <label>Тариф <input id="tariffName" value="Fiber Max" /></label>
+              <label>Цена <input id="tariffPrice" value="7 990 ₸" /></label>
+              <button class="primary wide" type="submit">Сохранить тариф</button>
+            </form>
+            <ul class="tariffs" id="tariffList">
+              <li><strong>Fiber Start</strong><span>4 990 ₸</span><button>Редактировать</button></li>
+              <li><strong>Fiber Max</strong><span>7 990 ₸</span><button>Редактировать</button></li>
             </ul>
           </div>
         </section>
 
-        <section class="architecture" id="architecture">
-          <div class="section-title">
-            <h2>Техническая основа</h2>
-            <p>Стек из PRD, который нужен для полной серверной версии проекта.</p>
-          </div>
-          <div class="stack-grid">
-            <div><strong>Next.js</strong><span>App Router UI и API routes</span></div>
-            <div><strong>Prisma</strong><span>Модели тарифов и истории генераций</span></div>
-            <div><strong>PostgreSQL</strong><span>Постоянное хранение данных</span></div>
-            <div><strong>OpenAI Images API</strong><span>Генерация через gpt-image-1</span></div>
-          </div>
+        <section class="acceptance">
+          <div><strong>Next.js</strong><span>App Router + API routes</span></div>
+          <div><strong>Prisma</strong><span>generated_images и tariffs</span></div>
+          <div><strong>PostgreSQL</strong><span>История и CRUD</span></div>
+          <div><strong>OpenAI Images API</strong><span>gpt-image-1, без images.edit</span></div>
         </section>
       </section>
     </main>
+
+    <dialog id="previewDialog">
+      <button class="close" id="closeDialog" type="button">Закрыть</button>
+      <div class="generated-image large" id="dialogImage">
+        <span>Generated</span>
+        <h3>Fiber Max</h3>
+        <p>Готовый рекламный баннер</p>
+      </div>
+    </dialog>
 
     <script src="./app.js"></script>
   </body>
