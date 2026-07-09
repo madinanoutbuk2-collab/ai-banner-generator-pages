@@ -1,50 +1,60 @@
+const form = document.querySelector("#generatorForm");
 const promptField = document.querySelector("#prompt");
 const formatField = document.querySelector("#format");
-const styleField = document.querySelector("#style");
-const preview = document.querySelector("#preview");
-const previewTitle = document.querySelector("#previewTitle");
-const previewText = document.querySelector("#previewText");
-const historyList = document.querySelector("#historyList");
-const tariffForm = document.querySelector("#tariffForm");
+const toneField = document.querySelector("#tone");
+const autoRetryField = document.querySelector("#autoRetry");
+const queueItems = [...document.querySelectorAll("#queueList li strong")];
+const statusPill = document.querySelector("#statusPill");
+const app = document.querySelector(".app");
+const variants = [...document.querySelectorAll(".variant")];
 
-const styleBackgrounds = {
-  clean: "radial-gradient(circle at 85% 20%, rgba(18, 185, 129, 0.8), transparent 24%), linear-gradient(135deg, #101828 0%, #144f7b 48%, #4fa9ff 100%)",
-  retail: "radial-gradient(circle at 86% 18%, rgba(255, 214, 102, 0.9), transparent 24%), linear-gradient(135deg, #14213d 0%, #4fa9ff 52%, #12b981 100%)",
-  premium: "radial-gradient(circle at 82% 22%, rgba(124, 92, 255, 0.85), transparent 24%), linear-gradient(135deg, #111827 0%, #25324d 45%, #4fa9ff 100%)"
-};
+const variantTitles = [
+  "5G launch",
+  "Fiber home",
+  "Business line",
+  "Retry result"
+];
 
-const titleByFormat = {
-  wide: "Интернет до 1 Гбит/с",
-  square: "Скорость для всей семьи",
-  story: "Подключение за один день"
-};
-
-function makeBanner() {
-  const text = promptField.value.trim() || "Новая промо-кампания для клиентов";
-  const firstSentence = text.split(/[.!?]/)[0].trim();
-  previewTitle.textContent = titleByFormat[formatField.value];
-  previewText.textContent = firstSentence.length > 90 ? `${firstSentence.slice(0, 90)}...` : firstSentence;
-  preview.style.background = styleBackgrounds[styleField.value];
-  preview.classList.remove("is-ready");
-  requestAnimationFrame(() => preview.classList.add("is-ready"));
-
-  const item = document.createElement("li");
-  item.innerHTML = `<span>${previewTitle.textContent}</span><small>${formatField.options[formatField.selectedIndex].text} · ${styleField.options[styleField.selectedIndex].text}</small>`;
-  historyList.prepend(item);
+function setQueue(step, labels) {
+  queueItems.forEach((item, index) => {
+    item.textContent = index < step ? "Done" : labels[index] || "Waiting";
+  });
 }
 
-document.querySelector("#generate").addEventListener("click", makeBanner);
-document.querySelector("#generateTop").addEventListener("click", makeBanner);
+function summarizePrompt() {
+  const text = promptField.value.trim() || "Telecom campaign";
+  const compact = text.split(/[.!?]/)[0].trim();
+  return compact.length > 54 ? `${compact.slice(0, 54)}...` : compact;
+}
 
-tariffForm.addEventListener("submit", (event) => {
+function updateVariants() {
+  const summary = summarizePrompt();
+  variants.forEach((card, index) => {
+    const title = card.querySelector(".art strong");
+    const body = card.querySelector(".variant-meta p");
+    title.textContent = variantTitles[index];
+    body.textContent = `${formatField.value} · ${toneField.value} · ${summary}`;
+  });
+}
+
+function runGeneration(event) {
   event.preventDefault();
-  const name = document.querySelector("#tariffName").value.trim();
-  const speed = document.querySelector("#tariffSpeed").value.trim();
-  const price = document.querySelector("#tariffPrice").value.trim();
-  if (!name || !speed || !price) return;
+  app.classList.add("is-running");
+  statusPill.lastChild.textContent = " Running";
+  setQueue(0, ["Running", "Waiting", "Waiting", autoRetryField.checked ? "Auto" : "Off"]);
 
-  const item = document.createElement("li");
-  item.innerHTML = `<span>${name}</span><small>${speed} · ${price}</small>`;
-  historyList.prepend(item);
-  tariffForm.reset();
-});
+  window.setTimeout(() => setQueue(1, ["Done", "Running", "Waiting", autoRetryField.checked ? "Auto" : "Off"]), 350);
+  window.setTimeout(() => setQueue(2, ["Done", "Done", "Running", autoRetryField.checked ? "Auto" : "Off"]), 850);
+  window.setTimeout(() => {
+    setQueue(autoRetryField.checked ? 4 : 3, ["Done", "Done", "Done", autoRetryField.checked ? "Done" : "Off"]);
+    updateVariants();
+    app.classList.remove("is-running");
+    statusPill.lastChild.textContent = " Ready";
+  }, 1450);
+}
+
+form.addEventListener("submit", runGeneration);
+promptField.addEventListener("input", updateVariants);
+formatField.addEventListener("change", updateVariants);
+toneField.addEventListener("change", updateVariants);
+updateVariants();
