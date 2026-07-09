@@ -1,60 +1,66 @@
-const form = document.querySelector("#generatorForm");
-const promptField = document.querySelector("#prompt");
-const formatField = document.querySelector("#format");
-const toneField = document.querySelector("#tone");
-const autoRetryField = document.querySelector("#autoRetry");
-const queueItems = [...document.querySelectorAll("#queueList li strong")];
-const statusPill = document.querySelector("#statusPill");
-const app = document.querySelector(".app");
-const variants = [...document.querySelectorAll(".variant")];
+const layout = document.querySelector(".layout");
+const generatorForm = document.querySelector("#generatorForm");
+const runButton = document.querySelector("#runGeneration");
+const brief = document.querySelector("#brief");
+const channel = document.querySelector("#channel");
+const tone = document.querySelector("#tone");
+const pipeline = [...document.querySelectorAll("#pipeline strong")];
+const cards = [...document.querySelectorAll(".banner-card")];
+const tariffForm = document.querySelector("#tariffForm");
+const tariffList = document.querySelector("#tariffList");
 
-const variantTitles = [
-  "5G launch",
-  "Fiber home",
-  "Business line",
-  "Retry result"
-];
-
-function setQueue(step, labels) {
-  queueItems.forEach((item, index) => {
-    item.textContent = index < step ? "Done" : labels[index] || "Waiting";
+function setPipeline(activeIndex) {
+  pipeline.forEach((node, index) => {
+    if (index < activeIndex) node.textContent = "Done";
+    if (index === activeIndex) node.textContent = "Running";
+    if (index > activeIndex) node.textContent = index === 3 ? "Enabled" : "Waiting";
   });
 }
 
-function summarizePrompt() {
-  const text = promptField.value.trim() || "Telecom campaign";
-  const compact = text.split(/[.!?]/)[0].trim();
-  return compact.length > 54 ? `${compact.slice(0, 54)}...` : compact;
-}
-
-function updateVariants() {
-  const summary = summarizePrompt();
-  variants.forEach((card, index) => {
-    const title = card.querySelector(".art strong");
-    const body = card.querySelector(".variant-meta p");
-    title.textContent = variantTitles[index];
-    body.textContent = `${formatField.value} · ${toneField.value} · ${summary}`;
+function updateCards() {
+  const firstLine = brief.value.trim().split(/[.!?]/)[0] || "Новая телеком-кампания";
+  cards.forEach((card, index) => {
+    const body = card.querySelector(".card-body p");
+    body.textContent = `${channel.value} · ${tone.value} · ${firstLine.slice(0, 72)}`;
+    if (index === 3) {
+      body.textContent = `Auto retry · ${tone.value} · свежая генерация без шаблона`;
+    }
   });
 }
 
 function runGeneration(event) {
   event.preventDefault();
-  app.classList.add("is-running");
-  statusPill.lastChild.textContent = " Running";
-  setQueue(0, ["Running", "Waiting", "Waiting", autoRetryField.checked ? "Auto" : "Off"]);
-
-  window.setTimeout(() => setQueue(1, ["Done", "Running", "Waiting", autoRetryField.checked ? "Auto" : "Off"]), 350);
-  window.setTimeout(() => setQueue(2, ["Done", "Done", "Running", autoRetryField.checked ? "Auto" : "Off"]), 850);
+  layout.classList.add("is-running");
+  setPipeline(0);
+  window.setTimeout(() => setPipeline(1), 350);
+  window.setTimeout(() => setPipeline(2), 850);
+  window.setTimeout(() => setPipeline(3), 1250);
   window.setTimeout(() => {
-    setQueue(autoRetryField.checked ? 4 : 3, ["Done", "Done", "Done", autoRetryField.checked ? "Done" : "Off"]);
-    updateVariants();
-    app.classList.remove("is-running");
-    statusPill.lastChild.textContent = " Ready";
-  }, 1450);
+    pipeline.forEach((node) => {
+      node.textContent = "Done";
+    });
+    updateCards();
+    layout.classList.remove("is-running");
+  }, 1650);
 }
 
-form.addEventListener("submit", runGeneration);
-promptField.addEventListener("input", updateVariants);
-formatField.addEventListener("change", updateVariants);
-toneField.addEventListener("change", updateVariants);
-updateVariants();
+function addTariff(event) {
+  event.preventDefault();
+  const name = document.querySelector("#tariffName").value.trim();
+  const speed = document.querySelector("#tariffSpeed").value.trim();
+  const price = document.querySelector("#tariffPrice").value.trim();
+  if (!name || !speed || !price) return;
+
+  const item = document.createElement("li");
+  item.innerHTML = `<span>${name}</span><strong>${speed} · ${price}</strong><button>Изменить</button>`;
+  tariffList.prepend(item);
+  tariffForm.reset();
+}
+
+generatorForm.addEventListener("submit", runGeneration);
+runButton.addEventListener("click", runGeneration);
+brief.addEventListener("input", updateCards);
+channel.addEventListener("change", updateCards);
+tone.addEventListener("change", updateCards);
+tariffForm.addEventListener("submit", addTariff);
+updateCards();
