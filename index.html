@@ -1,146 +1,149 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI Banner Generator</title>
+    <title>AI Telecom Banner Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="shell">
-      <aside class="sidebar" aria-label="Навигация">
+    <main class="app">
+      <aside class="rail" aria-label="Studio navigation">
         <div class="brand">
-          <span class="brand-mark">AI</span>
+          <span>AI</span>
           <div>
             <strong>Telecom Studio</strong>
-            <small>Banner Generator</small>
+            <small>gpt-image-1 workflow</small>
           </div>
         </div>
         <nav>
-          <a href="#generator" class="active">Генератор</a>
-          <a href="#tariffs">Тарифы</a>
-          <a href="#admin">Админ</a>
-          <a href="#history">История</a>
+          <a class="active" href="#generate">Generate</a>
+          <a href="#variants">Variants</a>
+          <a href="#retry">Auto retry</a>
         </nav>
       </aside>
 
-      <main>
-        <header class="topbar">
+      <section class="workspace">
+        <header class="toolbar">
           <div>
-            <p class="eyebrow">AI-платформа для телеком-маркетинга</p>
-            <h1>Баннеры, тарифы и быстрые кампании в одном интерфейсе</h1>
+            <p class="eyebrow">AI Telecom Banner Studio</p>
+            <h1>Generate four polished telecom banners in one run.</h1>
           </div>
-          <button class="primary-action" id="generateTop">Сгенерировать</button>
+          <div class="status-pill" id="statusPill">
+            <span></span>
+            Ready
+          </div>
         </header>
 
-        <section id="generator" class="workspace">
-          <div class="panel generator-panel">
-            <div class="section-heading">
-              <h2>Генератор баннеров</h2>
-              <p>Введите рекламный текст, выберите формат и получите готовый креатив.</p>
+        <section id="generate" class="generator">
+          <form class="panel" id="generatorForm">
+            <div class="heading">
+              <h2>Campaign prompt</h2>
+              <p>Describe the offer, audience, and telecom product. The studio prepares four visual directions.</p>
             </div>
 
-            <label for="prompt">Рекламный текст</label>
-            <textarea id="prompt" rows="6">Подключите домашний интернет до 1 Гбит/с и получите первый месяц за 0 ₸.</textarea>
+            <label>
+              Offer text
+              <textarea id="prompt" rows="7">Launch a 5G home internet campaign with unlimited traffic, same-day setup, and a premium router included.</textarea>
+            </label>
 
-            <div class="controls">
+            <div class="fields">
               <label>
-                Формат
+                Format
                 <select id="format">
-                  <option value="wide">Wide 16:9</option>
-                  <option value="square">Square 1:1</option>
-                  <option value="story">Story 9:16</option>
+                  <option>Social square</option>
+                  <option>Web hero</option>
+                  <option>Story vertical</option>
+                  <option>Outdoor screen</option>
                 </select>
               </label>
               <label>
-                Стиль
-                <select id="style">
-                  <option value="clean">Clean SaaS</option>
-                  <option value="retail">Retail Promo</option>
-                  <option value="premium">Premium Fiber</option>
+                Brand tone
+                <select id="tone">
+                  <option>Confident</option>
+                  <option>Premium</option>
+                  <option>Retail</option>
+                  <option>Business</option>
                 </select>
               </label>
             </div>
 
-            <button class="primary-action full" id="generate">Сгенерировать баннер</button>
-          </div>
+            <label class="toggle">
+              <input id="autoRetry" type="checkbox" checked />
+              <span>Auto retry failed variants</span>
+            </label>
 
-          <div class="preview-wrap">
-            <div class="banner-preview" id="preview">
-              <div class="signal">
-                <span></span><span></span><span></span><span></span>
-              </div>
-              <p class="preview-kicker">FIBER PLUS</p>
-              <h2 id="previewTitle">Интернет до 1 Гбит/с</h2>
-              <p id="previewText">Первый месяц за 0 ₸ при подключении онлайн</p>
-              <div class="preview-footer">
-                <strong>Telecom Studio</strong>
-                <button>Подключить</button>
-              </div>
+            <button class="primary" type="submit">Generate 4 variants</button>
+          </form>
+
+          <section id="retry" class="queue">
+            <div class="heading">
+              <h2>Generation queue</h2>
+              <p>Simulated gpt-image-1 run with retry handling for failed outputs.</p>
             </div>
-          </div>
+            <ol id="queueList">
+              <li><span>Prompt enhancement</span><strong>Ready</strong></li>
+              <li><span>Variant batch</span><strong>Waiting</strong></li>
+              <li><span>Quality check</span><strong>Waiting</strong></li>
+              <li><span>Retry pass</span><strong>Auto</strong></li>
+            </ol>
+          </section>
         </section>
 
-        <section id="tariffs" class="section-band">
-          <div class="section-heading">
-            <h2>Тарифы</h2>
-            <p>Витрина предложений для подключения и продвижения.</p>
-          </div>
-          <div class="tariff-grid">
-            <article class="tariff-card">
-              <span>Home</span>
-              <h3>Fiber 300</h3>
-              <p>300 Мбит/с для квартиры и удаленной работы.</p>
-              <strong>4 990 ₸/мес</strong>
-              <button>Подключить</button>
-            </article>
-            <article class="tariff-card featured">
-              <span>Popular</span>
-              <h3>Fiber 1000</h3>
-              <p>1 Гбит/с, Wi-Fi 6 роутер и приоритетная поддержка.</p>
-              <strong>7 990 ₸/мес</strong>
-              <button>Подключить</button>
-            </article>
-            <article class="tariff-card">
-              <span>Business</span>
-              <h3>Office Pro</h3>
-              <p>Стабильный канал, статический IP и SLA.</p>
-              <strong>14 990 ₸/мес</strong>
-              <button>Подключить</button>
-            </article>
-          </div>
-        </section>
-
-        <section id="admin" class="admin-grid">
-          <div class="panel">
-            <div class="section-heading">
-              <h2>Админ-панель</h2>
-              <p>Быстрое управление тарифами без перезагрузки страницы.</p>
+        <section id="variants" class="variants">
+          <article class="variant featured" data-index="1">
+            <div class="art art-a">
+              <span>5G</span>
+              <strong>Unlimited speed</strong>
             </div>
-            <form id="tariffForm">
-              <label>Название <input id="tariffName" value="Fiber 500" /></label>
-              <label>Скорость <input id="tariffSpeed" value="500 Мбит/с" /></label>
-              <label>Цена <input id="tariffPrice" value="5 990 ₸/мес" /></label>
-              <button class="primary-action full" type="submit">Добавить тариф</button>
-            </form>
-          </div>
-
-          <div class="panel" id="history">
-            <div class="section-heading">
-              <h2>История генераций</h2>
-              <p>Последние созданные варианты для кампаний.</p>
+            <div class="variant-meta">
+              <h3>Variant 1</h3>
+              <p>High-energy consumer promo with bold product copy.</p>
+              <button type="button">Download PNG</button>
             </div>
-            <ul class="history-list" id="historyList">
-              <li><span>Fiber Plus</span><small>Wide 16:9 · Clean SaaS</small></li>
-              <li><span>Office Pro</span><small>Square 1:1 · Premium Fiber</small></li>
-            </ul>
-          </div>
+          </article>
+
+          <article class="variant" data-index="2">
+            <div class="art art-b">
+              <span>Fiber</span>
+              <strong>Home upgrade</strong>
+            </div>
+            <div class="variant-meta">
+              <h3>Variant 2</h3>
+              <p>Clean residential internet offer for digital channels.</p>
+              <button type="button">Download PNG</button>
+            </div>
+          </article>
+
+          <article class="variant" data-index="3">
+            <div class="art art-c">
+              <span>B2B</span>
+              <strong>Always online</strong>
+            </div>
+            <div class="variant-meta">
+              <h3>Variant 3</h3>
+              <p>Business continuity concept for office connectivity.</p>
+              <button type="button">Download PNG</button>
+            </div>
+          </article>
+
+          <article class="variant retry" data-index="4">
+            <div class="art art-d">
+              <span>Retry</span>
+              <strong>Regenerated</strong>
+            </div>
+            <div class="variant-meta">
+              <h3>Variant 4</h3>
+              <p>Auto retry replaces failed image attempts with a fresh result.</p>
+              <button type="button">Download PNG</button>
+            </div>
+          </article>
         </section>
-      </main>
-    </div>
+      </section>
+    </main>
 
     <script src="./app.js"></script>
   </body>
