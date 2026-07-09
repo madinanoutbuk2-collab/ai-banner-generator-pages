@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Banner Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Навигация">
+        <div class="brand">
+          <span class="brand-mark">AI</span>
+          <div>
+            <strong>Telecom Studio</strong>
+            <small>Banner Generator</small>
+          </div>
+        </div>
+        <nav>
+          <a href="#generator" class="active">Генератор</a>
+          <a href="#tariffs">Тарифы</a>
+          <a href="#admin">Админ</a>
+          <a href="#history">История</a>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">AI-платформа для телеком-маркетинга</p>
+            <h1>Баннеры, тарифы и быстрые кампании в одном интерфейсе</h1>
+          </div>
+          <button class="primary-action" id="generateTop">Сгенерировать</button>
+        </header>
+
+        <section id="generator" class="workspace">
+          <div class="panel generator-panel">
+            <div class="section-heading">
+              <h2>Генератор баннеров</h2>
+              <p>Введите рекламный текст, выберите формат и получите готовый креатив.</p>
+            </div>
+
+            <label for="prompt">Рекламный текст</label>
+            <textarea id="prompt" rows="6">Подключите домашний интернет до 1 Гбит/с и получите первый месяц за 0 ₸.</textarea>
+
+            <div class="controls">
+              <label>
+                Формат
+                <select id="format">
+                  <option value="wide">Wide 16:9</option>
+                  <option value="square">Square 1:1</option>
+                  <option value="story">Story 9:16</option>
+                </select>
+              </label>
+              <label>
+                Стиль
+                <select id="style">
+                  <option value="clean">Clean SaaS</option>
+                  <option value="retail">Retail Promo</option>
+                  <option value="premium">Premium Fiber</option>
+                </select>
+              </label>
+            </div>
+
+            <button class="primary-action full" id="generate">Сгенерировать баннер</button>
+          </div>
+
+          <div class="preview-wrap">
+            <div class="banner-preview" id="preview">
+              <div class="signal">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <p class="preview-kicker">FIBER PLUS</p>
+              <h2 id="previewTitle">Интернет до 1 Гбит/с</h2>
+              <p id="previewText">Первый месяц за 0 ₸ при подключении онлайн</p>
+              <div class="preview-footer">
+                <strong>Telecom Studio</strong>
+                <button>Подключить</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tariffs" class="section-band">
+          <div class="section-heading">
+            <h2>Тарифы</h2>
+            <p>Витрина предложений для подключения и продвижения.</p>
+          </div>
+          <div class="tariff-grid">
+            <article class="tariff-card">
+              <span>Home</span>
+              <h3>Fiber 300</h3>
+              <p>300 Мбит/с для квартиры и удаленной работы.</p>
+              <strong>4 990 ₸/мес</strong>
+              <button>Подключить</button>
+            </article>
+            <article class="tariff-card featured">
+              <span>Popular</span>
+              <h3>Fiber 1000</h3>
+              <p>1 Гбит/с, Wi-Fi 6 роутер и приоритетная поддержка.</p>
+              <strong>7 990 ₸/мес</strong>
+              <button>Подключить</button>
+            </article>
+            <article class="tariff-card">
+              <span>Business</span>
+              <h3>Office Pro</h3>
+              <p>Стабильный канал, статический IP и SLA.</p>
+              <strong>14 990 ₸/мес</strong>
+              <button>Подключить</button>
+            </article>
+          </div>
+        </section>
+
+        <section id="admin" class="admin-grid">
+          <div class="panel">
+            <div class="section-heading">
+              <h2>Админ-панель</h2>
+              <p>Быстрое управление тарифами без перезагрузки страницы.</p>
+            </div>
+            <form id="tariffForm">
+              <label>Название <input id="tariffName" value="Fiber 500" /></label>
+              <label>Скорость <input id="tariffSpeed" value="500 Мбит/с" /></label>
+              <label>Цена <input id="tariffPrice" value="5 990 ₸/мес" /></label>
+              <button class="primary-action full" type="submit">Добавить тариф</button>
+            </form>
+          </div>
+
+          <div class="panel" id="history">
+            <div class="section-heading">
+              <h2>История генераций</h2>
+              <p>Последние созданные варианты для кампаний.</p>
+            </div>
+            <ul class="history-list" id="historyList">
+              <li><span>Fiber Plus</span><small>Wide 16:9 · Clean SaaS</small></li>
+              <li><span>Office Pro</span><small>Square 1:1 · Premium Fiber</small></li>
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
